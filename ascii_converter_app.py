@@ -2,22 +2,27 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk
 
+# Danh sách các ký tự ASCII dùng để thay thế mức xám
 ASCII_CHARS = "@%#*+=-:. "
 
 def resize_image(image, new_width=100):
+    """Thay đổi kích thước ảnh với tỷ lệ để chuyển sang ASCII."""
     width, height = image.size
     aspect_ratio = height / width
     new_height = int(new_width * aspect_ratio * 0.55)
     return image.resize((new_width, new_height))
 
 def grayify(image):
+    """Chuyển ảnh sang thang độ xám."""
     return image.convert("L")
 
 def pixels_to_ascii(image):
+    """Chuyển đổi mức xám của pixel thành ký tự ASCII."""
     pixels = image.getdata()
     return "".join([ASCII_CHARS[pixel // 25] for pixel in pixels])
 
 def image_to_ascii(image_path, new_width=100):
+    """Chuyển đổi một ảnh sang ASCII Art."""
     try:
         image = Image.open(image_path)
     except Exception as e:
@@ -29,29 +34,33 @@ def image_to_ascii(image_path, new_width=100):
 
     ascii_str = pixels_to_ascii(image)
     ascii_width = image.width
-    return "\n".join([ascii_str[i:i+ascii_width] for i in range(0, len(ascii_str), ascii_width)])
+    return "\n".join([ascii_str[i:i + ascii_width] for i in range(0, len(ascii_str), ascii_width)])
 
 def open_image():
-    file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg;*.jpeg")])
+    """Mở và hiển thị ảnh gốc, đồng thời chuyển đổi sang ASCII."""
+    file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.bmp;*.tiff")])
     if not file_path:
         return
 
     try:
         original_image = Image.open(file_path)
-        original_image.thumbnail((300, 300))  # Resize for display
+        original_image.thumbnail((300, 300))  # Resize for hiển thị
         original_photo = ImageTk.PhotoImage(original_image)
         lbl_original.config(image=original_photo)
         lbl_original.image = original_photo
 
-        ascii_art = image_to_ascii(file_path, new_width=100)
+        ascii_width = int(entry_width.get()) if entry_width.get().isdigit() else 100
+        ascii_art = image_to_ascii(file_path, new_width=ascii_width)
         if ascii_art:
             txt_ascii.delete(1.0, tk.END)
             txt_ascii.insert(tk.END, ascii_art)
             btn_save.config(state=tk.NORMAL)
+            btn_copy.config(state=tk.NORMAL)
     except Exception as e:
         messagebox.showerror("Lỗi", f"Không thể xử lý ảnh: {e}")
 
 def save_ascii():
+    """Lưu ASCII Art thành file văn bản."""
     ascii_content = txt_ascii.get(1.0, tk.END).strip()
     if not ascii_content:
         messagebox.showerror("Lỗi", "Không có dữ liệu ASCII để lưu.")
@@ -67,6 +76,18 @@ def save_ascii():
         messagebox.showinfo("Thành công", "ASCII Art đã được lưu.")
     except Exception as e:
         messagebox.showerror("Lỗi", f"Lỗi khi lưu file: {e}")
+
+def copy_to_clipboard():
+    """Sao chép ASCII Art vào clipboard."""
+    ascii_content = txt_ascii.get(1.0, tk.END).strip()
+    if not ascii_content:
+        messagebox.showerror("Lỗi", "Không có dữ liệu ASCII để sao chép.")
+        return
+
+    root.clipboard_clear()
+    root.clipboard_append(ascii_content)
+    root.update()  # Đảm bảo clipboard được cập nhật
+    messagebox.showinfo("Thành công", "ASCII Art đã được sao chép vào clipboard.")
 
 # Tạo giao diện chính
 root = tk.Tk()
@@ -87,14 +108,22 @@ frame_ascii.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.BOTH, expand=True)
 txt_ascii = tk.Text(frame_ascii, wrap=tk.NONE, font=("Courier", 10))
 txt_ascii.pack(fill=tk.BOTH, expand=True)
 
-# Các nút
-frame_buttons = tk.Frame(root)
-frame_buttons.pack(side=tk.BOTTOM, pady=10)
+# Khung nhập và nút chức năng
+frame_controls = tk.Frame(root)
+frame_controls.pack(side=tk.BOTTOM, pady=10)
 
-btn_open = tk.Button(frame_buttons, text="Chọn ảnh", command=open_image)
+tk.Label(frame_controls, text="Độ rộng ASCII:").pack(side=tk.LEFT, padx=5)
+entry_width = tk.Entry(frame_controls, width=5)
+entry_width.insert(0, "100")  # Giá trị mặc định
+entry_width.pack(side=tk.LEFT, padx=5)
+
+btn_open = tk.Button(frame_controls, text="Chọn ảnh", command=open_image)
 btn_open.pack(side=tk.LEFT, padx=10)
 
-btn_save = tk.Button(frame_buttons, text="Lưu ASCII", command=save_ascii, state=tk.DISABLED)
-btn_save.pack(side=tk.RIGHT, padx=10)
+btn_save = tk.Button(frame_controls, text="Lưu ASCII", command=save_ascii, state=tk.DISABLED)
+btn_save.pack(side=tk.LEFT, padx=10)
+
+btn_copy = tk.Button(frame_controls, text="Sao chép ASCII", command=copy_to_clipboard, state=tk.DISABLED)
+btn_copy.pack(side=tk.LEFT, padx=10)
 
 root.mainloop()
