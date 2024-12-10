@@ -21,3 +21,13 @@
 Sử dụng pip để cài đặt thư viện cần thiết:
 ```bash
 pip install Pillow
+```
+
+### Chạy ứng dụng
+1. Tải mã nguồn xuống và lưu vào tệp Python, ví dụ: `image_to_ascii.py`.
+2. Mở terminal hoặc command prompt, điều hướng đến thư mục chứa tệp.
+3. Thực thi tệp bằng lệnh sau:
+   ```bash
+   python image_to_ascii.py
+   ```
+Khi chạy, cửa sổ giao diện sẽ xuất hiện, cho phép bạn thực hiện các bước chuyển đổi ảnh sang ASCII Art.
