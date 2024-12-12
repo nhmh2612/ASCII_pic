@@ -92,38 +92,47 @@ def copy_to_clipboard():
 # Tạo giao diện chính
 root = tk.Tk()
 root.title("Chuyển đổi ảnh sang ASCII")
-root.geometry("800x600")
+root.geometry("900x700")
+root.configure(bg="#f0f0f0")
 
 # Khung hình ảnh gốc
-frame_original = tk.LabelFrame(root, text="Ảnh gốc", padx=10, pady=10)
-frame_original.pack(side=tk.LEFT, padx=10, pady=10)
+frame_original = tk.LabelFrame(root, text="Ảnh gốc", padx=10, pady=10, bg="#ffffff", font=("Arial", 12, "bold"))
+frame_original.pack(side=tk.LEFT, padx=20, pady=20)
 
-lbl_original = tk.Label(frame_original)
+lbl_original = tk.Label(frame_original, bg="#ffffff")
 lbl_original.pack()
 
 # Khung ASCII art
-frame_ascii = tk.LabelFrame(root, text="ASCII Art", padx=10, pady=10)
-frame_ascii.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.BOTH, expand=True)
+frame_ascii = tk.LabelFrame(root, text="ASCII Art", padx=10, pady=10, bg="#ffffff", font=("Arial", 12, "bold"))
+frame_ascii.pack(side=tk.RIGHT, padx=20, pady=20, fill=tk.BOTH, expand=True)
 
-txt_ascii = tk.Text(frame_ascii, wrap=tk.NONE, font=("Courier", 10))
+scroll_y = tk.Scrollbar(frame_ascii, orient=tk.VERTICAL)
+scroll_x = tk.Scrollbar(frame_ascii, orient=tk.HORIZONTAL)
+
+txt_ascii = tk.Text(frame_ascii, wrap=tk.NONE, font=("Courier", 10), yscrollcommand=scroll_y.set, xscrollcommand=scroll_x.set, bg="#f7f7f7")
 txt_ascii.pack(fill=tk.BOTH, expand=True)
 
+scroll_y.config(command=txt_ascii.yview)
+scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
+scroll_x.config(command=txt_ascii.xview)
+scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
+
 # Khung nhập và nút chức năng
-frame_controls = tk.Frame(root)
+frame_controls = tk.Frame(root, bg="#f0f0f0")
 frame_controls.pack(side=tk.BOTTOM, pady=10)
 
-tk.Label(frame_controls, text="Độ rộng ASCII:").pack(side=tk.LEFT, padx=5)
-entry_width = tk.Entry(frame_controls, width=5)
+tk.Label(frame_controls, text="Độ rộng ASCII:", bg="#f0f0f0", font=("Arial", 10)).pack(side=tk.LEFT, padx=5)
+entry_width = tk.Entry(frame_controls, width=5, font=("Arial", 10))
 entry_width.insert(0, "100")  # Giá trị mặc định
 entry_width.pack(side=tk.LEFT, padx=5)
 
-btn_open = tk.Button(frame_controls, text="Chọn ảnh", command=open_image)
+btn_open = tk.Button(frame_controls, text="Chọn ảnh", command=open_image, bg="#4caf50", fg="white", font=("Arial", 10, "bold"))
 btn_open.pack(side=tk.LEFT, padx=10)
 
-btn_save = tk.Button(frame_controls, text="Lưu ASCII", command=save_ascii, state=tk.DISABLED)
+btn_save = tk.Button(frame_controls, text="Lưu ASCII", command=save_ascii, state=tk.DISABLED, bg="#2196f3", fg="white", font=("Arial", 10, "bold"))
 btn_save.pack(side=tk.LEFT, padx=10)
 
-btn_copy = tk.Button(frame_controls, text="Sao chép ASCII", command=copy_to_clipboard, state=tk.DISABLED)
+btn_copy = tk.Button(frame_controls, text="Sao chép ASCII", command=copy_to_clipboard, state=tk.DISABLED, bg="#ff9800", fg="white", font=("Arial", 10, "bold"))
 btn_copy.pack(side=tk.LEFT, padx=10)
 
 root.mainloop()
