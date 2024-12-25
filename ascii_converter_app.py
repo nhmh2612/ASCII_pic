@@ -56,6 +56,7 @@ def open_image():
             txt_ascii.insert(tk.END, ascii_art)
             btn_save.config(state=tk.NORMAL)
             btn_copy.config(state=tk.NORMAL)
+            btn_reset.config(state=tk.NORMAL)
     except Exception as e:
         messagebox.showerror("Lỗi", f"Không thể xử lý ảnh: {e}")
 
@@ -88,6 +89,15 @@ def copy_to_clipboard():
     root.clipboard_append(ascii_content)
     root.update()  # Đảm bảo clipboard được cập nhật
     messagebox.showinfo("Thành công", "ASCII Art đã được sao chép vào clipboard.")
+
+def reset_app():
+    """Đặt lại giao diện về trạng thái ban đầu."""
+    lbl_original.config(image="")
+    lbl_original.image = None
+    txt_ascii.delete(1.0, tk.END)
+    btn_save.config(state=tk.DISABLED)
+    btn_copy.config(state=tk.DISABLED)
+    btn_reset.config(state=tk.DISABLED)
 
 # Tạo giao diện chính
 root = tk.Tk()
@@ -134,5 +144,8 @@ btn_save.pack(side=tk.LEFT, padx=10)
 
 btn_copy = tk.Button(frame_controls, text="Sao chép ASCII", command=copy_to_clipboard, state=tk.DISABLED, bg="#ff9800", fg="white", font=("Arial", 10, "bold"))
 btn_copy.pack(side=tk.LEFT, padx=10)
+
+btn_reset = tk.Button(frame_controls, text="Đặt lại", command=reset_app, state=tk.DISABLED, bg="#f44336", fg="white", font=("Arial", 10, "bold"))
+btn_reset.pack(side=tk.LEFT, padx=10)
 
 root.mainloop()
